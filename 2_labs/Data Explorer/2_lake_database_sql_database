@@ -1,0 +1,70 @@
+-- #################################################
+-- Add the Delta Table into a Lake Database
+-- #################################################
+
+
+/*
+A lake database provides a relational metadata layer over one or more files in a data lake. 
+You can create a lake database that includes definitions for tables, including column names and data types as well as relationships between primary and foreign key columns. 
+The tables reference files in the data lake, enabling you to apply relational semantics to working with the data and querying it using SQL.
+
+Why should you register files in a lake datanbase? 
+I makes it much easier to query the data in the files. No need to write the query in terms of reading and parsing a file
+
+e.g.
+*/
+SELECT
+    FROM
+    OPENROWSET(
+        BULK 'https://dlstraind002.dfs.core.windows.net/curated/standardized/api/capa/airport.delta/',
+        FORMAT = 'DELTA'
+) AS [result]
+
+/* turns into */
+
+SELECT * FROM lake_database.dbo.airport
+
+
+/* 
+
+# Demo 1: Create a Lake Database that sits on a Storage Account and add a table pointing to the files
+######################################################
+- as we will share one Lake Database together we do it togehter
+
+- click + Lake Database 
+    -> Select Linked Service to storage account (dlstrain002) 
+    -> select folder with flight radar or airport data 
+    -> select Data Format Parquet as the files are expected to be delta/parquet based files
+
+- right click on the new lake database and on open
+    --> click on + Table --> From Data lake
+    - give it an external table name
+    - select again linked service
+    - select the folder.delta
+    - check the preview
+    - hit create table
+
+*/
+
+
+SELECT TOP 100 * FROM currated.dbo.airport
+
+
+
+
+
+/* 
+
+# Demo 2: Create a external Table in the SQL Database 
+######################################################
+- as we will share one SQL Database we do this also together
+
+- Show the way via SQL Create Table Statement in the SQL Database
+
+- Then create the table via the file explorer --> with create SQL Script
+
+
+*/
+SELECT * FROM [sqldbtrain].[dbo].[airport]
+
+
